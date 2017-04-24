@@ -162,7 +162,7 @@ GLuint SkyBox::createCubeTexture(char* folder)
 
 
 		unsigned char header[124];
-		// пробуем открыть файл
+		// пробуе?открыт?файл
 		FILE *fp;
 		fp = fopen(image_path[i].c_str(), "rb");
 		if (fp == NULL)
@@ -171,7 +171,7 @@ GLuint SkyBox::createCubeTexture(char* folder)
 			return 0;
 		}
 
-		// проверим тип файла
+		
 		char filecode[4];
 		fread(filecode, 1, 4, fp);
 		if (strncmp(filecode, "DDS ", 4) != 0) {
@@ -179,7 +179,7 @@ GLuint SkyBox::createCubeTexture(char* folder)
 			return 0;
 		}
 
-		// читаем заголовок
+		
 		fread(&header, 124, 1, fp);
 
 		unsigned int height = *(unsigned int*)&(header[8]);
@@ -197,7 +197,7 @@ GLuint SkyBox::createCubeTexture(char* folder)
 		unsigned int buff_size = mipmap_count > 1 ? linear_size * 2 : linear_size;
 		buffer = (unsigned char*)malloc(buff_size * sizeof(unsigned char));
 		fread(buffer, 1, buff_size, fp);
-		// закрываем файл
+		// закрывае?файл
 		fclose(fp);
 
 #define FOURCC_DXT1 0x31545844 // "DXT1" in ASCII

@@ -29,6 +29,7 @@ void Triangle::init()
 
 	// shader for animated model
 	shaders_animated_model = ForShader::makeProgram("shaders/animated_model.vert", "shaders/animated_model.frag");
+	//shaders_animated_model = ForShader::makeProgram("shaders/skybox.vert", "shaders/skybox.frag");
 
 	model_man.initShaders(shaders_animated_model);
 	model_man.loadModel("models/man/model.dae");
@@ -126,8 +127,8 @@ void Triangle::render()
 	glUniform3f(glGetUniformLocation(shaders_animated_model, "point_light.specular"), 1.0f, 1.0f, 1.0f);
 
 	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.linear"), 0.007);	//0.14 0.09  0.07  0.045  0.027  0.022  0.014  0.007  0.0014 -	разное расстояние затухания
-	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.quadratic"), 0.0002);//0.07 0.032 0.017 0.0075 0.0028 0.0019 0.0007 0.0002 0.000007	расстояние -->
+	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.linear"), 0.007);	//0.14 0.09  0.07  0.045  0.027  0.022  0.014  0.007  0.0014 -	разное расстояни?затухания
+	glUniform1f(glGetUniformLocation(shaders_animated_model, "point_light.quadratic"), 0.0002);//0.07 0.032 0.017 0.0075 0.0028 0.0019 0.0007 0.0002 0.000007	расстояни?-->
 
 	MVP = perspective_projection * perspective_view * matr_model_1;
 	glUniformMatrix4fv(glGetUniformLocation(shaders_animated_model, "MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
@@ -189,19 +190,22 @@ GLuint Triangle::loadImageToTexture(const char* image_path)
 
 	ILuint ImageName; // The image name to return.
 	ilGenImages(1, &ImageName); // Grab a new image name.
-	ilBindImage(ImageName); // загрузит фотку в прикрепленную имаге
-	if (!ilLoadImage((ILstring)image_path)) std::cout << "image NOT load " << std::endl;
+	ilBindImage(ImageName); // загрузит фотк??прикрепленну?имаг?	
+	if (!ilLoadImage((ILstring)image_path))
+		std::cout << "image NOT load " << std::endl;
 	// we NEED RGB image (for not transparent)
 	//ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE); //Convert image to RGBA with unsigned byte data type
 
 	GLuint textureID;
-	glGenTextures(1, &textureID); // создать текстуру
+	glGenTextures(1, &textureID); // создат?текстуру
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_TYPE), ilGetData());
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_WIDTH), 
+		ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), 
+		ilGetInteger(IL_IMAGE_TYPE), ilGetData());
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	ilDeleteImages(1, &ImageName);
@@ -218,7 +222,6 @@ GLuint Triangle::loadDDS(const char* image_path, int *w, int *h)
 	// method returns complete !! OpenGL texture for drawing on screen
 	unsigned char header[124];
 
-	// пробуем открыть файл
 	FILE *fp;
 	fp = fopen(image_path, "rb");
 	if (fp == NULL)
@@ -227,7 +230,6 @@ GLuint Triangle::loadDDS(const char* image_path, int *w, int *h)
 		return 0;
 	}
 
-	// проверим тип файла
 	char filecode[4];
 	fread(filecode, 1, 4, fp);
 	if (strncmp(filecode, "DDS ", 4) != 0) {
@@ -236,7 +238,7 @@ GLuint Triangle::loadDDS(const char* image_path, int *w, int *h)
 		return 0;
 	}
 
-	// читаем заголовок
+
 	fread(&header, 124, 1, fp);
 
 	unsigned int height = *(unsigned int*)&(header[8]);
@@ -257,7 +259,7 @@ GLuint Triangle::loadDDS(const char* image_path, int *w, int *h)
 	unsigned int buff_size = mipmap_count > 1 ? linear_size * 2 : linear_size;
 	buffer = (unsigned char*)malloc(buff_size * sizeof(unsigned char));
 	fread(buffer, 1, buff_size, fp);
-	// закрываем файл
+	// закрывае?файл
 	fclose(fp);
 
 #define FOURCC_DXT1 0x31545844 // "DXT1" in ASCII

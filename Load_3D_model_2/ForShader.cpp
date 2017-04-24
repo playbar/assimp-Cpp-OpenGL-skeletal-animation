@@ -44,9 +44,8 @@ const GLchar* ForShader::readShader(const char* filename)
 
 GLuint ForShader::makeProgram(const char* vertex, const char* fragment)
 {
-	// Ќј„јЋќ ¬Ќ≈ƒ–≈Ќ»я Ў≈…ƒ≈–ќ¬
-	const char* vertexShaderCode = readShader(vertex); // читаем строки с кодом шейдера
-	const char* fragmentShaderCode = readShader(fragment); // читаем строки с кодом шейдера
+	const char* vertexShaderCode = readShader(vertex); 
+	const char* fragmentShaderCode = readShader(fragment); 
 	std::cout << vertexShaderCode << std::endl;
 	std::cout << fragmentShaderCode << std::endl;
 
@@ -64,12 +63,12 @@ GLuint ForShader::makeProgram(const char* vertex, const char* fragment)
 	glCompileShader(vertexShaderID);
 #ifdef _DEBUG
 	GLint compiled;
-	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &compiled); // проверка того что скомпилировалось 
+	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &compiled); // проверка того чт?скомпилировалось 
 	if (compiled == GL_FALSE) {
 		GLsizei len;
-		glGetShaderiv(vertexShaderID, GL_INFO_LOG_LENGTH, &len); // с - GL_INFO_LOG_LENGTH - вернет размер ошибки
+		glGetShaderiv(vertexShaderID, GL_INFO_LOG_LENGTH, &len); // ?- GL_INFO_LOG_LENGTH - вернет размер ошибки
 
-		GLchar* log = new GLchar[len + 1]; // дл€ журнала к котором будет ошибка
+		GLchar* log = new GLchar[len + 1]; // дл€ журнал??которо?буде?ошибка
 		glGetShaderInfoLog(vertexShaderID, len, &len, log); // заполнит журнал сообщением об ошибке
 		std::cout << "Vertex Shader compilation failed: " << log << std::endl;
 		delete[] log;
@@ -79,12 +78,12 @@ GLuint ForShader::makeProgram(const char* vertex, const char* fragment)
 
 	glCompileShader(fragmentShaderID);
 #ifdef _DEBUG
-	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &compiled); // проверка того что скомпилировалось 
+	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &compiled); // проверка того чт?скомпилировалось 
 	if (compiled == GL_FALSE) {
 		GLsizei len;
-		glGetShaderiv(fragmentShaderID, GL_INFO_LOG_LENGTH, &len); // с - GL_INFO_LOG_LENGTH - вернет размер ошибки
+		glGetShaderiv(fragmentShaderID, GL_INFO_LOG_LENGTH, &len); // ?- GL_INFO_LOG_LENGTH - вернет размер ошибки
 
-		GLchar* log = new GLchar[len + 1]; // дл€ журнала к котором будет ошибка
+		GLchar* log = new GLchar[len + 1]; // дл€ журнал??которо?буде?ошибка
 		glGetShaderInfoLog(fragmentShaderID, len, &len, log); // заполнит журнал сообщением об ошибке
 		std::cout << "Fragment Shader compilation failed: " << log << std::endl;
 		delete[] log;
@@ -112,13 +111,12 @@ GLuint ForShader::makeProgram(const char* vertex, const char* fragment)
 	}
 #endif // DEBUG
 
-	// освободит немного пам€ти
+	// освободи?немног?па?ти
 	//glDetachShader(programID, vertexShaderID);   // removes shader from program
 	glDeleteShader(vertexShaderID);				 // delete
 	//glDetachShader(programID, fragmentShaderID); // removes shader from program
 	glDeleteShader(fragmentShaderID);			 // delete
 
 	return programID;
-	
-	// «ј ќЌ„»Ћ» ¬Ќ≈ƒ–я“№ Ў≈…ƒ≈–џ
+
 }

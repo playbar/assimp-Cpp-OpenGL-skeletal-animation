@@ -34,10 +34,10 @@ void Game::init()
 	assert(2 < 5);
 
 	/*
-	эти значения стоят по умолчанию :
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); - двойной буффер (рисунок делается в закадровом буфере и перемещается на экран)
+	эт?значен? ст??по умолчани?:
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); - двойно?буффер (рисуно?делает? ?закадровом буфере ?перемещает? на экра?
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-	установить размер компонентов буфера кадра - 8 бит красного, зеленого, синего и альфа:
+	установить размер компоненто?буфера кадр?- 8 би?красного, зеленого, синего ?альф?
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -56,8 +56,8 @@ void Game::init()
 
 		SDL_DisplayMode dm;
 		SDL_GetDesktopDisplayMode(0, &dm); // if resolution change, this function will return the previous native display mode !!!
-		screen_width = dm.w;
-		screen_height = dm.h;
+		screen_width = 800;// dm.w;
+		screen_height = 600; // dm.h;
 		std::cout << dm.w << "    " << dm.h << std::endl;
 
 		window = SDL_CreateWindow("Chapter 1",
@@ -78,9 +78,9 @@ void Game::init()
 		std::cout << "window create error " << std::endl;
 		return; // sdl could not initialize
 	}
-	SDL_SetWindowFullscreen(window, 0); // переключать оконный / полноэкранный режим и обратно без потери контекста GL 
+	SDL_SetWindowFullscreen(window, SDL_WINDOW_OPENGL); 
 
-	glewExperimental = GL_TRUE; //все расширения с действительными точками входа будут выставлены.
+	glewExperimental = GL_TRUE; //вс?расширен? ?действительным?точкам?вход?буду?выставлены.
 	if (glewInit())// if all is init return 0 !! if not init return 1 and if() run
 	{
 		std::cout << "glew init error !" << std::endl;
@@ -100,8 +100,7 @@ void Game::init()
 	Mix_VolumeMusic(1);
 
 	glViewport(0, 0, screen_width, screen_height); // задать прямоугольник окна
-	glEnable(GL_DEPTH_TEST); // включаем тест глубины
-
+	glEnable(GL_DEPTH_TEST); // включаем тест глубин?
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glEnable(GL_POINT_SMOOTH);
@@ -110,16 +109,16 @@ void Game::init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	// antialiasing for figures need be do library who created window
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // устанавливаем фоновый цвет
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // устанавливае?фоновы?цвет
 	glClearDepth(1.0);
 
-	//glMatrixMode(GL_PROJECTION); режим текущей матрицы.( GL_MODELVIEW- переходим в трехмерный режим(по умолчанию))
+	//glMatrixMode(GL_PROJECTION); режи?текуще?матриц?( GL_MODELVIEW- переходи??трехмерный режи?по умолчани?)
 	//glLoadIdentity(); // replace the current matrix(modelview ) with the user matrix (GL_PROJECTION)
-	//glOrtho(0.0, 920.0, 900.0, 0.0, -1.0, 1.0);  - типа 2д экран становится
+	//glOrtho(0.0, 920.0, 900.0, 0.0, -1.0, 1.0);  - типа 2?экра?становит?
 	//glMatrixMode(GL_MODELVIEW);
 
 	int ff;
-	glGetIntegerv(GL_SAMPLE_BUFFERS, &ff); // проверить что включено(ff станет = 1) а что нет(ff = 0)?
+	glGetIntegerv(GL_SAMPLE_BUFFERS, &ff); // проверит?чт?включено(ff станет = 1) ?чт?не?ff = 0)?
 	//SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &ff);
 	std::cout << "GL_CHECK = " << ff << std::endl;
 
@@ -140,15 +139,14 @@ void Game::update()
 
 void Game::render()
 {
-	// очистить все возможные буфферы
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	triangle.render();
 
 
-	glFlush(); // опустошение буферов, отрисовка предыдущих команд // не ждет завершения
-	//glFinish(); //ждет пока все предыдущие команды не будут отрисованы
-	SDL_GL_SwapWindow(window);//отобразить только что нарисованный кадр на экране.
+	glFlush(); // опустошени?буферо? отрисовк?предыдущих команд // не ждет завершен?
+	//glFinish(); //ждет пока вс?предыдущие команд?не буду?отрисованы
+	SDL_GL_SwapWindow(window);//отобразить только чт?нарисованный кадр на экране.
 	 
 }
 

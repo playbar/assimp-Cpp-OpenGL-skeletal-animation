@@ -74,19 +74,6 @@ void Model::playSound()
 
 void Model::loadModel(const string& path)
 {
-	// how work skeletal animation in assimp :
-	// node это отдельна€ часть загруженной модели (модель это не только персонаж)
-	// например камера, арматура, куб, источник света, часть тела персонажа(нога, руга, голова).
-	// к node может быть прикреплена кость 
-	// в кости есть массив вершин на которые кость вли€ет (веса от 0 до 1).
-	// каждый канал это одна aiNodeAnim.
-	// ¬ aiNodeAnim собраны преобразовани€(scaling rotate translate) дл€ той кости с которой у них обшее название
-	// эти преобразовани€ измен€т те вершины, ID которых есть в кости с силой равной весу.
-	// кость просто содержит ID и вес вершин на которые повл€ет трансформаци€ из aiNodeAnim ( у ниe c костью общее им€ )
-	// (массив вершин и вес преобразований дл€ вершины есть в каждой кости)
-
-	// результат: конкретна€ трансформаци€ повли€ет на конкретную вершину с определенной силой.
-
 	scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
 	if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -124,7 +111,7 @@ void Model::loadModel(const string& path)
 
 	cout << "		name nodes animation : " << endl;
 	for (int i = 0; i < scene->mAnimations[0]->mNumChannels; i++)
-	{// у нас только одна анимаци€ в этой сцене
+	{
 		cout<< scene->mAnimations[0]->mChannels[i]->mNodeName.C_Str() << endl;
 	}
 	cout << endl;
@@ -149,7 +136,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	m_mesh_infos.resize(scene->mNumMeshes);
 
 	int num_vertic = 0;
-	for (int i = 0; i < scene->mNumMeshes; i++) // определ€ем где в ашем общем векторе будет находитс€ начало вершин следующей сетки
+	for (int i = 0; i < scene->mNumMeshes; i++) 
 	{
 		m_mesh_infos[i].base_index = num_vertic; // base_index == base_vertex
 		num_vertic += scene->mMeshes[i]->mNumVertices;
@@ -161,10 +148,11 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[i];
-		processMesh(mesh, i, scene, vertices, indices, textures, bones_id_weights_for_each_vertex); // собираем все вершины из всех мешей в одном векторе
+		processMesh(mesh, i, scene, vertices, indices, textures, bones_id_weights_for_each_vertex); 
+		// собираем вс?вершин?из всех меше??одно?вектор?	
 	}
 
-	mesh = Mesh(vertices, indices, textures, bones_id_weights_for_each_vertex); // собрать все в одном меше
+	mesh = Mesh(vertices, indices, textures, bones_id_weights_for_each_vertex); // собрат?вс??одно?меше
 }
 
 void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vector<Vertex> &vertices, vector<GLuint> &indices, vector<Texture> &textures, vector<VertexBoneData> &bones_id_weights)
@@ -212,9 +200,8 @@ void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vect
 	// indices
 	for (int i = 0; i < mesh->mNumFaces; i++)
 	{
-		aiFace face = mesh->mFaces[i]; // индексы вершин в нашем собранном векторе из нескольких мешей
-		indices.push_back(m_mesh_infos[mesh_index].base_index + face.mIndices[0]); // индексы начнутс€ с того места с которого добав€тс€ новые вершины 
-		indices.push_back(m_mesh_infos[mesh_index].base_index + face.mIndices[1]); // из новой сетки (в новой сетке вершины и их индексы начинаютс€ с начала)
+		aiFace face = mesh->mFaces[i]; // индекс?вершин ?наше?собранно?вектор?из нескольких меше?		indices.push_back(m_mesh_infos[mesh_index].base_index + face.mIndices[0]); // индекс?начнут? ?того мест??которого доба?тс€ новы?вершин?
+		indices.push_back(m_mesh_infos[mesh_index].base_index + face.mIndices[1]); // из ново?сетк?(?ново?сетк?вершин??их индекс?начинают? ?начала)
 		indices.push_back(m_mesh_infos[mesh_index].base_index + face.mIndices[2]);
 	}
 
@@ -227,7 +214,7 @@ void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vect
 		bool exist = false;
 		for (int i = 0; i < textures.size() && diffuse_maps.size() != 0; i++)
 		{
-			if (textures[i].path ==  diffuse_maps[0].path) // должна быть максимум 1 текстура диффузе и 1 спекул€р в одном меше
+			if (textures[i].path ==  diffuse_maps[0].path) // должна быть максимум 1 текстура диффуз??1 спекул€??одно?меше
 			{
 				exist = true;
 			}
@@ -239,7 +226,7 @@ void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vect
 		exist = false;
 		for (int i = 0; i < textures.size() && specular_maps.size() != 0; i++)
 		{
-			if (textures[i].path == specular_maps[0].path) // должна быть максимум 1 текстура диффузе и 1 спекул€р в одном меше
+			if (textures[i].path == specular_maps[0].path) // должна быть максимум 1 текстура диффуз??1 спекул€??одно?меше
 			{
 				exist = true;
 			}
@@ -255,7 +242,7 @@ void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vect
 		string bone_name(mesh->mBones[i]->mName.data);
 		cout << mesh->mBones[i]->mName.data << endl;
 
-		if (m_bone_mapping.find(bone_name) == m_bone_mapping.end()) // проверить нет ли в векторе элемента
+		if (m_bone_mapping.find(bone_name) == m_bone_mapping.end()) // проверит?не?ли ?вектор?элемента
 		{
 			// Allocate an index for a new bone
 			bone_index = m_num_bones;
@@ -274,11 +261,10 @@ void Model::processMesh(aiMesh* mesh, int mesh_index, const aiScene* scene, vect
 
 		for (uint j = 0; j < mesh->mBones[i]->mNumWeights; j++)
 		{
-			uint vertex_id = m_mesh_infos[mesh_index].base_index + mesh->mBones[i]->mWeights[j].mVertexId; // ид вершины на которую вли€ет выбранна€ кость
+			uint vertex_id = m_mesh_infos[mesh_index].base_index + mesh->mBones[i]->mWeights[j].mVertexId; 
 			float weight = mesh->mBones[i]->mWeights[j].mWeight;
-			bones_id_weights[vertex_id].addBoneData(bone_index, weight); // у каждой вершины будет кость и ее вес
-
-			// индекс вершины vertex_id на которую кость с индексом bone_index  имеет вес weight
+			bones_id_weights[vertex_id].addBoneData(bone_index, weight); // ?каждой вершин?буде?кост??ее ве?
+			// индекс вершин?vertex_id на котору?кост??индексом bone_index  имее?ве?weight
 			//cout << " vertex_id: " << vertex_id << "	bone_index: " << bone_index << "		weight: " << weight << endl;
 		}
 	} 
@@ -308,12 +294,12 @@ vector<Texture> Model::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, 
 
 uint Model::findPosition(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	// найти кадр который будет сразу после времени прошедшего после начала анимации
-	for (uint i = 0; i < p_node_anim->mNumPositionKeys - 1; i++) //  Ћё„≈¬џ≈  јƒ–џ анимации
+	// найт?кадр которы?буде?сраз?посл?времен?прошедшего посл?начала анимации
+	for (uint i = 0; i < p_node_anim->mNumPositionKeys - 1; i++) //  Ћё„≈¬џ≈  јƒ–?анимации
 	{
 		if (p_animation_time < (float)p_node_anim->mPositionKeys[i + 1].mTime) // сравнить со временем слудеющего !!!
 		{
-			return i; // Ќќ ¬≈–Ќ”“№ »Ќƒ≈ — “≈ ”ў≈√ќ !!!!!!!!!!!!!!!!!! јјјјјјјјјјјјјјјјјјјјјјјјјјјј
+			return i; // Ќќ ¬≈–Ќ”“?»Ќƒ≈ — “≈ ”ў≈√ќ !!!!!!!!!!!!!!!!!! јјјјјјјјјјјјјјјјјјјјјјјјјјјј
 		}
 	}
 
@@ -323,12 +309,12 @@ uint Model::findPosition(float p_animation_time, const aiNodeAnim* p_node_anim)
 
 uint Model::findRotation(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	// найти кадр который будет сразу после времени прошедшего после начала анимации
-	for (uint i = 0; i < p_node_anim->mNumRotationKeys - 1; i++) //  Ћё„≈¬џ≈  јƒ–џ анимации
+	// найт?кадр которы?буде?сраз?посл?времен?прошедшего посл?начала анимации
+	for (uint i = 0; i < p_node_anim->mNumRotationKeys - 1; i++) //  Ћё„≈¬џ≈  јƒ–?анимации
 	{
 		if (p_animation_time < (float)p_node_anim->mRotationKeys[i + 1].mTime) // сравнить со вмеренем слудеющего !!!
 		{
-			return i; // Ќќ ¬≈–Ќ”“№ »Ќƒ≈ — “≈ ”ў≈√ќ !!!!!!!!!!!!!!!!!! јјјјјјјјјјјјјјјјјјјјјјјјјјјј
+			return i; // Ќќ ¬≈–Ќ”“?»Ќƒ≈ — “≈ ”ў≈√ќ !!!!!!!!!!!!!!!!!! јјјјјјјјјјјјјјјјјјјјјјјјјјјј
 		}
 	}
 
@@ -338,12 +324,12 @@ uint Model::findRotation(float p_animation_time, const aiNodeAnim* p_node_anim)
 
 uint Model::findScaling(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	// найти кадр который будет сразу после времени прошедшего после начала анимации
-	for (uint i = 0; i < p_node_anim->mNumScalingKeys - 1; i++) //  Ћё„≈¬џ≈  јƒ–џ анимации
+	// найт?кадр которы?буде?сраз?посл?времен?прошедшего посл?начала анимации
+	for (uint i = 0; i < p_node_anim->mNumScalingKeys - 1; i++) //  Ћё„≈¬џ≈  јƒ–?анимации
 	{
  		if (p_animation_time < (float)p_node_anim->mScalingKeys[i + 1].mTime) // сравнить со вмеренем слудеющего !!!
 		{
-			return i; // Ќќ ¬≈–Ќ”“№ »Ќƒ≈ — “≈ ”ў≈√ќ !!!!!!!!!!!!!!!!!! јјјјјјјјјјјјјјјјјјјјјјјјјјјј
+			return i; // Ќќ ¬≈–Ќ”“?»Ќƒ≈ — “≈ ”ў≈√ќ !!!!!!!!!!!!!!!!!! јјјјјјјјјјјјјјјјјјјјјјјјјјјј
 		}
 	}
 
@@ -353,17 +339,15 @@ uint Model::findScaling(float p_animation_time, const aiNodeAnim* p_node_anim)
 
 aiVector3D Model::calcInterpolatedPosition(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	if (p_node_anim->mNumPositionKeys == 1) // Keys это ключевые кадры
+	if (p_node_anim->mNumPositionKeys == 1) 
 	{
 		return p_node_anim->mPositionKeys[0].mValue;
 	}
 
-	uint position_index = findPosition(p_animation_time, p_node_anim); // вернет индекс ключевого кадра который началс€
-	uint next_position_index = position_index + 1; // индекс следующего ключевого кадра
+	uint position_index = findPosition(p_animation_time, p_node_anim); 
+	uint next_position_index = position_index + 1; 
 	assert(next_position_index < p_node_anim->mNumPositionKeys);
-	// врем€ между кадрами
 	float delta_time = (float)(p_node_anim->mPositionKeys[next_position_index].mTime - p_node_anim->mPositionKeys[position_index].mTime);
-	// фактор = (врем€ которое прошло ќ“ Ќј„јЋј “≈ ”ў≈√ќ  Ћё„≈¬ќ√ќ  јƒ–ј) / на врем€ между кадрами
 	float factor = (p_animation_time - (float)p_node_anim->mPositionKeys[position_index].mTime) / delta_time;
 	assert(factor >= 0.0f && factor <= 1.0f);
 	aiVector3D start = p_node_anim->mPositionKeys[position_index].mValue;
@@ -375,17 +359,15 @@ aiVector3D Model::calcInterpolatedPosition(float p_animation_time, const aiNodeA
 
 aiQuaternion Model::calcInterpolatedRotation(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	if (p_node_anim->mNumRotationKeys == 1) // Keys это ключевые кадры
+	if (p_node_anim->mNumRotationKeys == 1) 
 	{
 		return p_node_anim->mRotationKeys[0].mValue;
 	}
 
-	uint rotation_index = findRotation(p_animation_time, p_node_anim); // вернет индекс ключевого кадра который началс€
-	uint next_rotation_index = rotation_index + 1; // индекс следующего ключевого кадра
+	uint rotation_index = findRotation(p_animation_time, p_node_anim); 
+	uint next_rotation_index = rotation_index + 1; 
 	assert(next_rotation_index < p_node_anim->mNumRotationKeys);
-	// врем€ между кадрами
 	float delta_time = (float)(p_node_anim->mRotationKeys[next_rotation_index].mTime - p_node_anim->mRotationKeys[rotation_index].mTime);
-	// фактор = (врем€ которое прошло ќ“ Ќј„јЋј “≈ ”ў≈√ќ  Ћё„≈¬ќ√ќ  јƒ–ј) / на врем€ между кадрами
 	float factor = (p_animation_time - (float)p_node_anim->mRotationKeys[rotation_index].mTime) / delta_time;
 	
 	//cout << "p_node_anim->mRotationKeys[rotation_index].mTime: " << p_node_anim->mRotationKeys[rotation_index].mTime << endl;
@@ -404,17 +386,15 @@ aiQuaternion Model::calcInterpolatedRotation(float p_animation_time, const aiNod
 
 aiVector3D Model::calcInterpolatedScaling(float p_animation_time, const aiNodeAnim* p_node_anim)
 {
-	if (p_node_anim->mNumScalingKeys == 1) // Keys это ключевые кадры
+	if (p_node_anim->mNumScalingKeys == 1)
 	{
 		return p_node_anim->mScalingKeys[0].mValue;
 	}
 
-	uint scaling_index = findScaling(p_animation_time, p_node_anim); // вернет индекс ключевого кадра который началс€
-	uint next_scaling_index = scaling_index + 1; // индекс следующего ключевого кадра
+	uint scaling_index = findScaling(p_animation_time, p_node_anim); 
+	uint next_scaling_index = scaling_index + 1;
 	assert(next_scaling_index < p_node_anim->mNumScalingKeys);
-	// врем€ между кадрами
 	float delta_time = (float)(p_node_anim->mScalingKeys[next_scaling_index].mTime - p_node_anim->mScalingKeys[scaling_index].mTime);
-	// фактор = (врем€ которое прошло ќ“ Ќј„јЋј “≈ ”ў≈√ќ  Ћё„≈¬ќ√ќ  јƒ–ј) / на врем€ между кадрами
 	float  factor = (p_animation_time - (float)p_node_anim->mScalingKeys[scaling_index].mTime) / delta_time;
 	assert(factor >= 0.0f && factor <= 1.0f);
 	aiVector3D start = p_node_anim->mScalingKeys[scaling_index].mValue;
@@ -430,8 +410,8 @@ const aiNodeAnim * Model::findNodeAnim(const aiAnimation * p_animation, const st
 	// numChannels == numBones
 	for (uint i = 0; i < p_animation->mNumChannels; i++)
 	{
-		const aiNodeAnim* node_anim = p_animation->mChannels[i]; // ќписывает анимацию одного node
-		if (string(node_anim->mNodeName.data) == p_node_name) // если имена совпадают то анимаци€ node представлена этой node_anim
+		const aiNodeAnim* node_anim = p_animation->mChannels[i]; // ќписывае?анимацию одного node
+		if (string(node_anim->mNodeName.data) == p_node_name) // если имен?совпадаю?то анимац? node представлена этой node_anim
 		{
 			return node_anim;
 		}
@@ -445,11 +425,11 @@ void Model::readNodeHierarchy(float p_animation_time, const aiNode* p_node, cons
 
 	string node_name(p_node->mName.data);
 
-	// аждому node, на который воздействует анимаци€, предоставл€етс€ отдельна€ сери€ данных(aiNodeAnim).
+	// аждом?node, на которы?воздействует анимац?, предоставл€ет? отдельна€ сери€ данных(aiNodeAnim).
 	const aiAnimation* animation = scene->mAnimations[0];
 	aiMatrix4x4 node_transform = p_node->mTransformation;
 
-	const aiNodeAnim* node_anim = findNodeAnim(animation, node_name); // найти анимацию дл€ этого узла
+	const aiNodeAnim* node_anim = findNodeAnim(animation, node_name); // найт?анимацию дл€ этог?узла
 	
 	if (node_anim)
 	{
@@ -486,7 +466,7 @@ void Model::readNodeHierarchy(float p_animation_time, const aiNode* p_node, cons
 
 	aiMatrix4x4 global_transform = parent_transform * node_transform;
 
-	// ≈сли node представл€ет собой bone в иерархии, то им€ node должно совпадать с именем bone !!!
+	// ≈сли node представ?ет собо?bone ?иерархии, то им€ node должно совпадат??именем bone !!!
 	if (m_bone_mapping.find(node_name) != m_bone_mapping.end()) // true if node_name exist in bone_mapping
 	{
 		uint bone_index = m_bone_mapping[node_name];
@@ -505,8 +485,7 @@ void Model::boneTransform(float time_in_sec, vector<aiMatrix4x4>& transforms)
 	aiMatrix4x4 identity_matrix; // = mat4(1.0f);
 
 	float time_in_ticks = time_in_sec * ticks_per_second;
-	float animation_time = fmod(time_in_ticks, (float)scene->mAnimations[0]->mDuration); //деление по модулю флот чисел
-	// animation_time - врем€ которое прошло в этот момент от начала анимации (от первого ключевого кадра в анимации )
+	float animation_time = fmod(time_in_ticks, (float)scene->mAnimations[0]->mDuration); //делени?по модулю флот чисе?	// animation_time - врем€ которо?прошло ?этот момент от начала анимации (от первог?ключевог?кадр??анимации )
 
 	readNodeHierarchy(animation_time, scene->mRootNode, identity_matrix);
 	

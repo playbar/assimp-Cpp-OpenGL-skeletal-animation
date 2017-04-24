@@ -30,11 +30,11 @@ TextRendering::TextRendering()
 		GLuint texture;
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED,  // изображение, сгенерированное из глифа, является 8-битным изображением,
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED,  // изображени? сгенерированно?из глиф? являет? 8-битным изображением,
 			ft_face->glyph->bitmap.width,
 			ft_face->glyph->bitmap.rows,
-			0, GL_RED, // где каждый цвет представлен одним байтом.
-			GL_UNSIGNED_BYTE, // этот байт будет влиять ТОЛЬКО НА АЛЬФУ ТЕКСТУРЫ
+			0, GL_RED, // гд?каждый цвет представле?одни?байтом.
+			GL_UNSIGNED_BYTE, // этот байт буде?вл?ть ТОЛЬКО НА АЛЬФ?ТЕКСТУРЫ
 			ft_face->glyph->bitmap.buffer);
 
 		// texture options
@@ -62,8 +62,8 @@ TextRendering::TextRendering()
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO); // 1 квадрат = 6 вершин ( 4 флоат значения на каждую вершину // vec2 pos, vec2 texture ) 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 5, NULL, GL_DYNAMIC_DRAW); //  GL_DYNAMIC_DRAW - если часто обновляем память
+	glBindBuffer(GL_ARRAY_BUFFER, VBO); // 1 квадра?= 6 вершин ( 4 флоа?значен? на каждую вершин?// vec2 pos, vec2 texture ) 
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 5, NULL, GL_DYNAMIC_DRAW); //  GL_DYNAMIC_DRAW - если част?обновляем па?ть
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), 0);
 	glEnableVertexAttribArray(1);

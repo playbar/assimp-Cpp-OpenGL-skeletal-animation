@@ -12,8 +12,6 @@
 const int FPS = 60;
 const int DELAY_TIME = 1000 / FPS; // = 16 milisec // 1000 millisec == 1 sec
 
-// framebuffer - часть памяти видеокарты в которой хранятся пиксели которые отобразятся на мониторе.
-
 
 int main(int argc, char* argv[])
 {
