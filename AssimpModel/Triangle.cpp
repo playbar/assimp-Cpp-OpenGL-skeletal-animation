@@ -25,7 +25,9 @@ Triangle::~Triangle()
 void Triangle::init()
 {
 	shader.Init("shaders/model_loading.vert", "shaders/model_loading.frag");
-	ourModel.loadModel("models/nanosuit/nanosuit.obj");
+	//ourModel.loadModel("models/nanosuit/nanosuit.obj");
+	//ourModel.loadModel("models/man/model.dae");
+	ourModel.loadModel("models/space/space_screen03.FBX");
 	// shader for animated model
 	//shaders_animated_model = ForShader::makeProgram("shaders/skybox.vert", "shaders/skybox.frag");
 
@@ -50,8 +52,10 @@ void Triangle::render()
 
 	// Draw the loaded model
 	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
-	//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// It's a bit too big for our scene, so scale it down
+	model = glm::translate(model, glm::vec3(0.0f, 4.0f, -20.0f)); // Translate it down a bit so it's at the center of the scene
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0, 0.0, 0.0));           
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0, 1.0, 0.0));
+	model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));	// It's a bit too big for our scene, so scale it down
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	ourModel.Draw(shader);
 

@@ -135,6 +135,14 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
 	{
 		aiString str;
 		mat->GetTexture(type, i, &str);
+		const char *pTmp = strrchr(str.C_Str(), '\\');
+		if (pTmp != NULL) {
+			++pTmp;
+		}
+		else {
+			pTmp = str.C_Str();
+		}
+		str.Set(pTmp);
 		// Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
 		GLboolean skip = false;
 		for (GLuint j = 0; j < textures_loaded.size(); j++)
