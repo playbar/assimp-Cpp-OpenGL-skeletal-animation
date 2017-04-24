@@ -425,7 +425,6 @@ void Model::readNodeHierarchy(float p_animation_time, const aiNode* p_node, cons
 
 	string node_name(p_node->mName.data);
 
-	// аждом?node, на которы?воздействует анимац?, предоставл€ет? отдельна€ сери€ данных(aiNodeAnim).
 	const aiAnimation* animation = scene->mAnimations[0];
 	aiMatrix4x4 node_transform = p_node->mTransformation;
 
